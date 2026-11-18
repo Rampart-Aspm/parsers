@@ -98,7 +98,7 @@ jobs:
       - name: Compile WASM Module
         run: |
           cd "${{ matrix.parser.path }}"
-          GOOS=wasip1 GOARCH=wasm go build -trimpath -ldflags="-s -w" -o parser.wasm main.go
+          GOOS=wasip1 GOARCH=wasm go build -trimpath -ldflags="-s -w" -o parser.wasm .
           ls -lh parser.wasm
 
       - name: Run Parser Tests
@@ -156,7 +156,7 @@ jobs:
         id: compile
         run: |
           cd "${{ matrix.parser.path }}"
-          GOOS=wasip1 GOARCH=wasm go build -trimpath -ldflags="-s -w" -o parser.wasm main.go
+          GOOS=wasip1 GOARCH=wasm go build -trimpath -ldflags="-s -w" -o parser.wasm .
           
           if [ -n "${{ inputs.tag }}" ]; then
             VERSION="${{ inputs.tag }}"
