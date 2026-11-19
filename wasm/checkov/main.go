@@ -23,6 +23,10 @@ func main() {
 		ScannerFamily: "checkov",
 		Track:         "main",
 	}
+	if os.Getenv("RAMPART_RECORD_ERRORS") == "1" {
+		// The host wants a bad record reported, not the whole report stopped (docs/16 D13).
+		pc.RecordError = func(re domain.RecordError) { _ = enc.Encode(map[string]domain.RecordError{"__record_error": re}) }
+	}
 
 	for f, err := range p.Parse(ctx, os.Stdin, pc) {
 		if err != nil {

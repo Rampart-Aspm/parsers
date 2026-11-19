@@ -9,14 +9,21 @@ spec:
     the secret is hashed and never stored'
   detect:
     filenames:
-    - '*trufflehog*.json'
-    - '*trufflehog*.jsonl'
-    probes:
-    - jsonHasKeys:
-      - DetectorType
-      - Raw
+    - '*trufflehog*'
+    filenameWeight: 10
+    minScore: 60
+    rules:
+    - anyOf:
+      - '"DetectorName"'
+      weight: 40
+    - anyOf:
+      - '"SourceMetadata"'
+      weight: 30
+    - anyOf:
+      - '"Verified"'
+      weight: 20
   source:
-    oci: ghcr.io/rampart-aspm/parsers/trufflehog:1.0.0
+    oci: ghcr.io/rampart-aspm/parsers/trufflehog:v1
   limits:
     maxMemoryMB: 256
     timeoutSeconds: 60

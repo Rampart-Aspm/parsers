@@ -8,13 +8,25 @@ spec:
   description: 'Grype JSON: vulnerability matches with their related identifiers'
   detect:
     filenames:
-    - '*grype*.json'
-    probes:
-    - jsonHasKeys:
-      - matches
-      - source
+    - '*grype*'
+    filenameWeight: 10
+    reject:
+    - '"runs"'
+    rules:
+    - anyOf:
+      - '"matches"'
+      weight: 45
+    - anyOf:
+      - '"vulnerability"'
+      - '"artifact"'
+      weight: 30
+    - anyOf:
+      - '"descriptor"'
+      - '"matchDetails"'
+      - '"relatedVulnerabilities"'
+      weight: 20
   source:
-    oci: ghcr.io/rampart-aspm/parsers/grype:1.0.0
+    oci: ghcr.io/rampart-aspm/parsers/grype:v1
   limits:
     maxMemoryMB: 256
     timeoutSeconds: 60

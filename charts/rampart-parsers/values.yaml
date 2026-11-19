@@ -1,0 +1,22 @@
+# Which default parsers are installed. All are on. `defaultParsers.enabled: false` installs none. A parser is turned off by its
+# name. The shape is the one Rampart's own chart has always had (parsers.defaultParsers), so a Rampart release that
+# includes this chart as `parsers` keeps its values.
+defaultParsers:
+  enabled: true
+  bandit: {enabled: true}
+  checkov: {enabled: true}
+  dependencycheck: {enabled: true}
+  genericjson: {enabled: true}
+  gitlab: {enabled: true}
+  gitleaks: {enabled: true}
+  grype: {enabled: true}
+  kubebench: {enabled: true}
+  nuclei: {enabled: true}
+  openvex: {enabled: true}
+  prowler: {enabled: true}
+  sarif: {enabled: true}
+  semgrep: {enabled: true}
+  snyk: {enabled: true}
+  trivy: {enabled: true}
+  trufflehog: {enabled: true}
+  zap: {enabled: true}

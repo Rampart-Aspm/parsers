@@ -9,12 +9,21 @@ spec:
   detect:
     filenames:
     - '*.sarif'
-    - '*sarif*.json'
-    probes:
-    - jsonHasKeys:
-      - runs
+    - '*.sarif.json'
+    contentTypes:
+    - '*sarif+json*'
+    filenameWeight: 50
+    rules:
+    - anyOf:
+      - '"version": "2.1.0"'
+      - '"version":"2.1.0"'
+      weight: 30
+    - anyOf:
+      - 'sarif-2.1.0.json'
+      - '"runs"'
+      weight: 20
   source:
-    oci: ghcr.io/rampart-aspm/parsers/sarif:1.0.0
+    oci: ghcr.io/rampart-aspm/parsers/sarif:v1
   limits:
     maxMemoryMB: 256
     timeoutSeconds: 60

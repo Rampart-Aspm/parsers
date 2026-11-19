@@ -8,14 +8,21 @@ spec:
   description: OWASP ZAP DAST alert report
   detect:
     filenames:
-    - '*zap*.json'
-    probes:
-    - jsonHasKeys:
-      - site
-      - '@programName'
-    - jsonHasKeys:
-      - site
-      - alerts
+    - '*zap*'
+    filenameWeight: 15
+    rules:
+    - allOf:
+      - '"@programName"'
+      - '"ZAP"'
+      weight: 50
+    - allOf:
+      - '"site"'
+      - '"alerts"'
+      weight: 35
+    - allOf:
+      - '"pluginId"'
+      - '"riskcode"'
+      weight: 20
   script: "function parse(input, emit)\n  local doc = json.decode(input)\n  if not\
     \ doc or not doc.site then\n    return\n  end\n\n  for _, site in ipairs(doc.site)\
     \ do\n    local site_name = site[\"@name\"] or \"\"\n    if site.alerts then\n\

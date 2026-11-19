@@ -8,15 +8,21 @@ spec:
   description: ProjectDiscovery Nuclei vulnerability scanner JSONL
   detect:
     filenames:
-    - '*nuclei*.json'
-    - '*nuclei*.jsonl'
-    probes:
-    - jsonHasKeys:
-      - template-id
-      - info
-    - jsonHasKeys:
-      - template_id
-      - info
+    - '*nuclei*'
+    filenameWeight: 15
+    rules:
+    - anyOf:
+      - '"template-id"'
+      - '"template_id"'
+      weight: 45
+    - anyOf:
+      - '"matched-at"'
+      - '"matched_at"'
+      weight: 35
+    - anyOf:
+      - '"extracted-results"'
+      - '"curl-command"'
+      weight: 15
   script: "function parse(input, emit)\n  for line in string.gmatch(input, \"[^\\\
     r\\n]+\") do\n    line = string.match(line, \"^%s*(.-)%s*$\")\n    if line ~=\
     \ \"\" then\n      local entry = json.decode(line)\n      if entry and entry[\"\

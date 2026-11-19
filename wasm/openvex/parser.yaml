@@ -8,14 +8,22 @@ spec:
   description: OpenVEX triage statements and exploitability assertions parser
   detect:
     filenames:
-    - '*openvex*.json'
+    - '*openvex*'
     - '*.vex.json'
-    probes:
-    - jsonHasKeys:
-      - '@context'
-      - statements
+    - '*.vex'
+    contentTypes:
+    - '*openvex*'
+    filenameWeight: 50
+    rules:
+    - anyOf:
+      - 'openvex.dev'
+      weight: 70
+    - allOf:
+      - '"statements"'
+      - '"vulnerability"'
+      weight: 40
   source:
-    oci: ghcr.io/rampart-aspm/parsers/openvex:1.0.0
+    oci: ghcr.io/rampart-aspm/parsers/openvex:v1
   limits:
     maxMemoryMB: 256
     timeoutSeconds: 60

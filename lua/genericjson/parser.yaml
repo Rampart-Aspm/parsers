@@ -8,14 +8,39 @@ spec:
   description: Rampart Generic Findings JSON format (DefectDojo generic import superset)
   detect:
     filenames:
-    - '*generic*.json'
-    - '*findings*.json'
-    probes:
-    - jsonHasKeys:
-      - findings
-    - jsonHasKeys:
-      - format
-      - rampart-generic
+    - '*generic*'
+    filenameWeight: 5
+    reject:
+    - '"runs"'
+    - '"bomFormat"'
+    - '"spdxVersion"'
+    - '"statements"'
+    - '"matches"'
+    - '"Results"'
+    - '"SchemaVersion"'
+    - '"check_id"'
+    - '"RuleID"'
+    - '"packageManager"'
+    - '"vulnerabilities"'
+    - '"reportSchema"'
+    - '"failed_checks"'
+    - '"template-id"'
+    - '"CheckID"'
+    - '"Controls"'
+    rules:
+    - anyOf:
+      - '"format": "rampart-generic'
+      - '"format":"rampart-generic'
+      return: 95
+    - anyOf:
+      - '"findings"'
+      weight: 25
+    - anyOf:
+      - '"title"'
+      weight: 10
+    - anyOf:
+      - '"severity"'
+      weight: 10
   script: "function parse(input, emit)\n  local doc = json.decode(input)\n  if not\
     \ doc then\n    return\n  end\n\n  local top_tool = doc.tool or doc.name or \"\
     generic\"\n  local top_ver = doc.version or \"\"\n\n  local items = doc\n  if\

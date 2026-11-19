@@ -1,0 +1,15 @@
+{{- /*
+One ClusterParser for each file of manifests/ (scripts/sync-chart.sh copies the parser.yaml that sits next to each parser's code).
+Nothing about a parser is written in this template: add a parser by adding its manifest.
+*/ -}}
+{{- $all := .Values.defaultParsers | default dict }}
+{{- if ternary $all.enabled true (hasKey $all "enabled") }}
+{{- range $path, $_ := .Files.Glob "manifests/*.yaml" }}
+{{- $m := $.Files.Get $path | fromYaml }}
+{{- $one := index $all $m.metadata.name | default dict }}
+{{- if ternary $one.enabled true (hasKey $one "enabled") }}
+---
+{{ include "rampart-parsers.render" (dict "m" $m "root" $) }}
+{{- end }}
+{{- end }}
+{{- end }}

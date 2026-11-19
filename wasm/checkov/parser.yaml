@@ -8,13 +8,25 @@ spec:
   description: Checkov IaC scanning report for Terraform, CloudFormation, K8s, Dockerfile
   detect:
     filenames:
-    - '*checkov*.json'
-    probes:
-    - jsonHasKeys:
-      - check_type
-      - results
+    - '*checkov*'
+    filenameWeight: 10
+    reject:
+    - '"runs"'
+    rules:
+    - anyOf:
+      - '"check_type"'
+      - '"results"'
+      weight: 35
+    - anyOf:
+      - '"failed_checks"'
+      - '"passed_checks"'
+      weight: 45
+    - allOf:
+      - '"check_id"'
+      - '"check_name"'
+      weight: 15
   source:
-    oci: ghcr.io/rampart-aspm/parsers/checkov:1.0.0
+    oci: ghcr.io/rampart-aspm/parsers/checkov:v1
   limits:
     maxMemoryMB: 256
     timeoutSeconds: 60

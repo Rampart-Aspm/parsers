@@ -9,17 +9,32 @@ spec:
     dependency and container scanning, DAST; the secret is hashed and never stored'
   detect:
     filenames:
-    - gl-sast-report*.json
-    - gl-secret-detection-report*.json
-    - gl-dependency-scanning-report*.json
-    - gl-container-scanning-report*.json
-    - gl-dast-report*.json
-    probes:
-    - jsonHasKeys:
-      - vulnerabilities
-      - scan
+    - 'gl-*-report*.json'
+    filenameWeight: 30
+    reject:
+    - '"runs"'
+    - '"bomFormat"'
+    - '"spdxVersion"'
+    - '"packageManager"'
+    rules:
+    - allOf:
+      - '"vulnerabilities"'
+      - '"identifiers"'
+      weight: 40
+    - allOf:
+      - '"scan"'
+      anyOf:
+      - '"analyzer"'
+      - '"scanner"'
+      weight: 25
+    - anyOf:
+      - 'security-report-schemas'
+      weight: 20
+    - anyOf:
+      - '"location"'
+      weight: 10
   source:
-    oci: ghcr.io/rampart-aspm/parsers/gitlab:1.0.0
+    oci: ghcr.io/rampart-aspm/parsers/gitlab:v1
   limits:
     maxMemoryMB: 256
     timeoutSeconds: 60
