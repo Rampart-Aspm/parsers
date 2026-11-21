@@ -18,12 +18,28 @@ Rampart uses out-of-process, sandboxed parsing engines decoupled from the core h
    - Interpreted using an embedded Gopher-Lua runtime.
    - Ideal for rapid scripting and lightweight transformations without a compilation toolchain.
 
-3. **Streaming JSONL Protocol:**
+3. **Streaming JSONL Protocol with Dynamic Evidence:**
    - Parsers stream newline-delimited JSON (`domain.RawFinding`) to `stdout`:
      ```json
-     {"finding_key":"...","title":"SQL Injection","severity":"high","category":"sast", ...}
+     {
+       "rule_id": "generic-api-key",
+       "title": "API Key Detected",
+       "severity": "high",
+       "category": "secret",
+       "attributes": {
+         "commit": "4f918e38a2b5c719e8a931405b63201460e1d892",
+         "author": "Security Team",
+         "email": "sec@acme.example",
+         "entropy": 4.821
+       },
+       "raw_payload": "..."
+     }
      ```
+   - **Zero-Hardcoding Guarantee**: Every scanner unmarshals its native JSON record directly into `attributes` and `raw_payload`. The host ingestion engine stores them in `occurrence.normalized` and `occurrence.raw`, and the Rampart UI dynamically detects data types (safe links, mailto, monospace commit SHAs with quick copy, markdown guides, and badges) without hardcoded schemas.
    - Errors, diagnostics, and recovery hints are logged to `stderr`.
+
+> [!NOTE]
+> **SBOM Architecture Separation**: Software Bill of Materials formats (CycloneDX, SPDX) follow a dedicated inventory ingestion pipeline (`ClusterSBOMParser`) rather than finding occurrence parsers. SBOMs construct component dependency trees and package inventories, which Rampart continuously correlates against threat intelligence advisories (NVD, OSV, KEV).
 
 ---
 

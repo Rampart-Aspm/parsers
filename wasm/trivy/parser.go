@@ -234,23 +234,33 @@ func mapVuln(v vuln, raw json.RawMessage, res result, osFamily, image string) do
 	if title == "" {
 		title = fmt.Sprintf("%s: %s", v.PkgName, v.VulnerabilityID)
 	}
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
 	return domain.RawFinding{
 		ScannerFamily: "trivy", ScannerName: "trivy", Category: domain.CategorySCA,
 		RuleID: v.VulnerabilityID, Title: normalize.NFC(title), Description: normalize.NFC(v.Description),
 		ToolSeverity: v.Severity, Severity: parseutil.Severity(v.Severity, bestScore),
 		VulnIDs: []string{v.VulnerabilityID}, CWEs: parseutil.CWEs(v.CweIDs...), CVSSVector: bestVector,
-		Location: loc, RawPayload: raw,
+		Location: loc, Attributes: attrs, RawPayload: raw,
 	}
 }
 
 func mapSecret(s secret, raw json.RawMessage, res result) domain.RawFinding {
 	// Trivy masks the secret in Match; the masked text still tells two secrets of one rule on one line apart.
+	redactedRaw := redactTrivySecret(raw)
+	var attrs map[string]any
+	if len(redactedRaw) > 0 {
+		_ = json.Unmarshal(redactedRaw, &attrs)
+	}
 	return domain.RawFinding{
 		ScannerFamily: "trivy", ScannerName: "trivy", Category: domain.CategorySecret,
 		RuleID: s.RuleID, Title: normalize.NFC(s.Title), ToolSeverity: s.Severity, Severity: parseutil.Severity(s.Severity, 0),
 		SecretValue: s.Match,
 		Location:    domain.Location{Code: &domain.CodeLocation{FilePath: normalize.CleanPath(res.target), StartLine: s.StartLine, EndLine: s.EndLine}},
-		RawPayload:  redactTrivySecret(raw),
+		Attributes:  attrs,
+		RawPayload:  redactedRaw,
 	}
 }
 
@@ -290,20 +300,29 @@ func mapMisconfig(m misconfig, raw json.RawMessage, res result) domain.RawFindin
 	if m.CauseMetadata.Resource != "" {
 		loc.Resource = &domain.ResourceLocation{Address: m.CauseMetadata.Resource, Type: m.Type}
 	}
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
 	return domain.RawFinding{
 		ScannerFamily: "trivy", ScannerName: "trivy", Category: domain.CategoryIaC,
 		RuleID: id, RuleName: m.Title, Title: normalize.NFC(m.Title), Description: normalize.NFC(desc),
-		ToolSeverity: m.Severity, Severity: parseutil.Severity(m.Severity, 0), Location: loc, RawPayload: raw,
+		ToolSeverity: m.Severity, Severity: parseutil.Severity(m.Severity, 0), Location: loc, Attributes: attrs, RawPayload: raw,
 	}
 }
 
 func mapLicense(l license, raw json.RawMessage, res result) domain.RawFinding {
 	base := "pkg:generic/" + url.PathEscape(l.PkgName)
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
 	return domain.RawFinding{
 		ScannerFamily: "trivy", ScannerName: "trivy", Category: domain.CategoryLicense,
 		RuleID: l.Name, Title: fmt.Sprintf("%s uses the %s license", l.PkgName, l.Name),
 		ToolSeverity: l.Severity, Severity: parseutil.Severity(l.Severity, 0),
 		Location:   domain.Location{Package: &domain.PackageLocation{ComponentName: l.PkgName, PurlBase: base, ManifestPath: normalize.CleanPath(firstNonEmpty(l.FilePath, res.target))}},
+		Attributes: attrs,
 		RawPayload: raw,
 	}
 }

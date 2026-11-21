@@ -134,12 +134,17 @@ func mapMatch(m match, raw json.RawMessage) domain.RawFinding {
 	if len(m.Artifact.Locations) > 0 {
 		manifest = m.Artifact.Locations[0].Path
 	}
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
 	return domain.RawFinding{
 		ScannerFamily: "grype", ScannerName: "grype", Category: domain.CategorySCA,
 		RuleID: v.ID, Title: normalize.NFC(fmt.Sprintf("%s: %s", m.Artifact.Name, v.ID)), Description: normalize.NFC(v.Description),
 		ToolSeverity: v.Severity, Severity: parseutil.Severity(v.Severity, bestScore),
 		VulnIDs: ids, CVSSVector: bestVector,
 		Location:   domain.Location{Package: parseutil.Package(m.Artifact.PURL, m.Artifact.Name, m.Artifact.Version, fixed, manifest)},
+		Attributes: attrs,
 		RawPayload: raw,
 	}
 }

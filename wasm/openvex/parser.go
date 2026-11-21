@@ -103,6 +103,10 @@ func (p *Parser) Parse(ctx context.Context, r io.Reader, pc domain.ParseContext)
 					}
 
 					rawBytes, _ := json.Marshal(stmt)
+					var attrs map[string]any
+					if len(rawBytes) > 0 {
+						_ = json.Unmarshal(rawBytes, &attrs)
+					}
 
 					rf := domain.RawFinding{
 						ScannerFamily: "openvex",
@@ -124,6 +128,7 @@ func (p *Parser) Parse(ctx context.Context, r io.Reader, pc domain.ParseContext)
 							Remediation:   stmt.Remediation,
 							Action:        stmt.ActionStatement,
 						},
+						Attributes: attrs,
 						RawPayload: rawBytes,
 					}
 
@@ -134,6 +139,10 @@ func (p *Parser) Parse(ctx context.Context, r io.Reader, pc domain.ParseContext)
 			} else {
 				// Statement without specific products
 				rawBytes, _ := json.Marshal(stmt)
+				var attrs map[string]any
+				if len(rawBytes) > 0 {
+					_ = json.Unmarshal(rawBytes, &attrs)
+				}
 				rf := domain.RawFinding{
 					ScannerFamily: "openvex",
 					ScannerName:   "openvex",
@@ -153,6 +162,7 @@ func (p *Parser) Parse(ctx context.Context, r io.Reader, pc domain.ParseContext)
 						Remediation:   stmt.Remediation,
 						Action:        stmt.ActionStatement,
 					},
+					Attributes: attrs,
 					RawPayload: rawBytes,
 				}
 

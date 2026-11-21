@@ -285,6 +285,10 @@ func mapResultToRawFinding(
 
 	// Keep raw record
 	rawBytes, _ := json.Marshal(res)
+	var attrs map[string]any
+	if len(rawBytes) > 0 {
+		_ = json.Unmarshal(rawBytes, &attrs)
+	}
 
 	return domain.RawFinding{
 		ScannerFamily:  scannerFamily,
@@ -301,6 +305,7 @@ func mapResultToRawFinding(
 		CWEs:           cwes,
 		VulnIDs:        vulnIDs,
 		Category:       category,
+		Attributes:     attrs,
 		RawPayload:     rawBytes,
 	}
 }

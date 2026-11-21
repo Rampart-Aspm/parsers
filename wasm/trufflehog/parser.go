@@ -128,13 +128,19 @@ func mapFinding(f finding, raw json.RawMessage) domain.RawFinding {
 		sev, tool, state = domain.SeverityCritical, "verified", "The credential was verified against its provider: it is live."
 	}
 	rule := strings.ToLower(strings.TrimSpace(f.DetectorName))
+	redactedRaw := redact(raw)
+	var attrs map[string]any
+	if len(redactedRaw) > 0 {
+		_ = json.Unmarshal(redactedRaw, &attrs)
+	}
 	return domain.RawFinding{
 		ScannerFamily: "trufflehog", ScannerName: "trufflehog", Category: domain.CategorySecret,
 		RuleID: rule, Title: normalize.NFC(f.DetectorName + " credential detected"), Description: normalize.NFC(state),
 		ToolSeverity: tool, Severity: sev, SecretValue: secret, SecretVerified: f.Verified,
 		Location: domain.Location{Code: &domain.CodeLocation{FilePath: normalize.CleanPath(w.File), StartLine: w.Line}, Image: w.Image},
 		// What is kept: the record without the credential.
-		RawPayload: redact(raw),
+		Attributes: attrs,
+		RawPayload: redactedRaw,
 	}
 }
 

@@ -156,6 +156,11 @@ func mapResult(res result, raw json.RawMessage, version string) domain.RawFindin
 		rf.Location.Code.Snippet, rf.Location.Code.SnippetHash = "", ""
 		rf.RawPayload = redactLines(raw)
 	}
+	var attrs map[string]any
+	if len(rf.RawPayload) > 0 {
+		_ = json.Unmarshal(rf.RawPayload, &attrs)
+	}
+	rf.Attributes = attrs
 	return rf
 }
 

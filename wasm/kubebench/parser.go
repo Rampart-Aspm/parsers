@@ -144,6 +144,11 @@ func (p *Parser) yieldControl(ctx context.Context, ctrl kbControl, raw json.RawM
 				desc += "\n\nAudit:\n" + res.Audit
 			}
 
+			var attrs map[string]any
+			if len(raw) > 0 {
+				_ = json.Unmarshal(raw, &attrs)
+			}
+
 			rf := domain.RawFinding{
 				RuleID:        res.TestNumber,
 				RuleName:      res.TestDesc,
@@ -160,6 +165,7 @@ func (p *Parser) yieldControl(ctx context.Context, ctrl kbControl, raw json.RawM
 						Type:    "kubernetes_node",
 					},
 				},
+				Attributes: attrs,
 				RawPayload: raw,
 			}
 

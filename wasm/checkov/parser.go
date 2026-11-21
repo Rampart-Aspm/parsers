@@ -217,6 +217,10 @@ func (p *Parser) toRawFinding(cf checkovFinding) domain.RawFinding {
 	}
 
 	raw, _ := json.Marshal(cf)
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
 
 	return domain.RawFinding{
 		RuleID:        cf.CheckID,
@@ -239,6 +243,7 @@ func (p *Parser) toRawFinding(cf checkovFinding) domain.RawFinding {
 				Type:    cf.CheckClass,
 			},
 		},
+		Attributes: attrs,
 		RawPayload: raw,
 	}
 }

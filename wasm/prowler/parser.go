@@ -154,6 +154,11 @@ func (p *Parser) yieldFinding(ctx context.Context, pf prowlerFinding, raw []byte
 		desc += "\n\nRemediation:\n" + pf.Remediation.Recommendation.Text
 	}
 
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
+
 	rf := domain.RawFinding{
 		RuleID:        pf.CheckID,
 		RuleName:      pf.CheckTitle,
@@ -171,6 +176,7 @@ func (p *Parser) yieldFinding(ctx context.Context, pf prowlerFinding, raw []byte
 				Type:    pf.ServiceName,
 			},
 		},
+		Attributes: attrs,
 		RawPayload: raw,
 	}
 

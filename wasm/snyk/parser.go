@@ -199,6 +199,11 @@ func (p *Parser) toRawFinding(sf snykFinding, raw json.RawMessage) domain.RawFin
 		title = fmt.Sprintf("%s in %s", sf.ID, sf.PackageName)
 	}
 
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
+
 	return domain.RawFinding{
 		RuleID:        sf.ID,
 		RuleName:      sf.Title,
@@ -219,6 +224,7 @@ func (p *Parser) toRawFinding(sf snykFinding, raw json.RawMessage) domain.RawFin
 		CWEs:       cwes,
 		VulnIDs:    vulnIDs,
 		CVSSVector: sf.CVSSv3,
+		Attributes: attrs,
 		RawPayload: raw,
 	}
 }

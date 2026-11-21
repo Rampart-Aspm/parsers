@@ -143,6 +143,11 @@ func (p *Parser) toRawFinding(vuln dcVulnerability, dep dcDependency, purl strin
 		}
 	}
 
+	var attrs map[string]any
+	if len(raw) > 0 {
+		_ = json.Unmarshal(raw, &attrs)
+	}
+
 	return domain.RawFinding{
 		RuleID:        vuln.Name,
 		RuleName:      vuln.Name,
@@ -163,6 +168,7 @@ func (p *Parser) toRawFinding(vuln dcVulnerability, dep dcDependency, purl strin
 		CWEs:       cwes,
 		VulnIDs:    []string{vuln.Name},
 		CVSSVector: vuln.CVSSv3.VectorString,
+		Attributes: attrs,
 		RawPayload: raw,
 	}
 }

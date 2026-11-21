@@ -320,6 +320,11 @@ func mapVulnerability(v vulnerability, raw json.RawMessage, sc *scan) domain.Raw
 		}
 		rf.Location.Code = code
 	}
+	var attrs map[string]any
+	if len(rf.RawPayload) > 0 {
+		_ = json.Unmarshal(rf.RawPayload, &attrs)
+	}
+	rf.Attributes = attrs
 	return rf
 }
 
