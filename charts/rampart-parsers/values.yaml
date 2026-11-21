@@ -12,7 +12,6 @@ defaultParsers:
   grype: {enabled: true}
   kubebench: {enabled: true}
   nuclei: {enabled: true}
-  openvex: {enabled: true}
   prowler: {enabled: true}
   sarif: {enabled: true}
   semgrep: {enabled: true}
