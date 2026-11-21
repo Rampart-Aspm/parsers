@@ -98,6 +98,12 @@ func mapLeak(l leak, raw json.RawMessage) domain.RawFinding {
 	if title == "" {
 		title = l.RuleID
 	}
+	redactedRaw := redact(raw)
+	var attrs map[string]any
+	if len(redactedRaw) > 0 {
+		_ = json.Unmarshal(redactedRaw, &attrs)
+	}
+
 	return domain.RawFinding{
 		ScannerFamily: "gitleaks", ScannerName: "gitleaks", Category: domain.CategorySecret,
 		RuleID: l.RuleID, Title: normalize.NFC(title), Description: normalize.NFC(l.Description),
@@ -106,7 +112,8 @@ func mapLeak(l leak, raw json.RawMessage) domain.RawFinding {
 		Location: domain.Location{Code: &domain.CodeLocation{
 			FilePath: normalize.CleanPath(l.File), StartLine: l.StartLine, EndLine: l.EndLine, StartColumn: l.StartColumn, EndColumn: l.EndColumn,
 		}},
-		RawPayload: redact(raw),
+		Attributes: attrs,
+		RawPayload: redactedRaw,
 	}
 }
 
