@@ -3,8 +3,8 @@ name: rampart-parsers
 description: The default report parsers of Rampart (ClusterParser resources), one per scanner format. Everything is on by default; each parser can be turned off.
 type: application
 # The version of the set. A change to any parser's detection or settings is a new version.
-version: 0.2.0
-appVersion: "0.2.0"
+version: 0.2.1
+appVersion: "0.2.1"
 kubeVersion: ">=1.25.0-0"
 keywords: [rampart, aspm, parsers, wasm, lua]
 sources:

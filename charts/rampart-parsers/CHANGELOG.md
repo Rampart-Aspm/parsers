@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.1]
+
+- fix(chart): remove `openvex` from report parsers (`ClusterParser`). OpenVEX triage reader is now shipped in `rampart-sbom-parsers` (`ClusterSBOMParser/sbom-openvex`) alongside CycloneDX embedded `extractVEX`.
+
 ## [0.2.0]
 
 - feat: dynamic scanner evidence extraction. All 13 WASM and 4 Lua security parsers unmarshal scanner-specific payloads into `domain.RawFinding.Attributes` and `RawPayload` without hardcoding, supporting dynamic inspection, smart data-type formatting, and interactive raw JSON viewing in the Rampart UI.
